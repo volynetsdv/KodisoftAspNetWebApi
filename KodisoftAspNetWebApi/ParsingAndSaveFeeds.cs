@@ -10,25 +10,17 @@ namespace KodisoftAspNetWebApi
 {
     public class ParsingAndSaveFeeds
     {
-        //usage:
-        //FeedParser parser = new FeedParser();
-        //var items = parser.Parse("http://www.ft.com/rss/home/uk", FeedType.RSS);
-        public void Parsing(int id) //требуется входящий параметр с индексом элемента
+        public void Parsing(int id) 
         {
             var optionsBuilder = new DbContextOptionsBuilder<FeedsContext>();
             var options = optionsBuilder
                 .UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=usersdbstore;Trusted_Connection=True;MultipleActiveResultSets=true")
                 .Options;
-
             var db = new FeedsContext(options);
             var parser = new FeedParser();
 
-
-            //var listOfUrls = .UrlsList.Select(r => r.Id);
-            //var requestUrl = db.UrlsList.Where(r => listOfUrls.Contains(r.Id));
-
-
-            var requestUrl = db.UrlsList.ElementAtOrDefault(id).FeedUrl; 
+            //get RSS/Atom URL for parser
+            var requestUrl = db.UrlsList.ElementAtOrDefault(id).FeedUrl;  //<<<<<<<EXCEPTION!!!
 
             FeedType resourceTipe;
             if (requestUrl.Contains("rss"))
@@ -36,7 +28,10 @@ namespace KodisoftAspNetWebApi
             else
             { resourceTipe = FeedType.Atom;}
 
+            //parse list of news
             var news = parser.Parse(requestUrl, resourceTipe);
+
+            //save each eltmtnts to SQL
             foreach (var n in news)
             {
                 db.Add(n);

@@ -17,7 +17,7 @@ namespace KodisoftAspNetWebApi.Controllers
         {
             db = context;
         }
-
+        //Get all news (isn't ready)
         [HttpGet]
         [ActionName("GetNewsList")]
         public IEnumerable<FeedItem> Get()
@@ -25,7 +25,7 @@ namespace KodisoftAspNetWebApi.Controllers
             return db.Items.ToList();
         }
 
-        //из-за него не работает swagger
+        //Get news by ID
         [HttpGet("{id}")]
         [ActionName("GetNews")]
         public IActionResult Get(int id)
@@ -39,56 +39,56 @@ namespace KodisoftAspNetWebApi.Controllers
                 return NotFound();
             return new ObjectResult(feedItem);
         }
+        ////does not finished part
+        //// POST api/feeds
+        //[HttpPost]
+        //public IActionResult Post([FromBody]FeedItem item)
+        //{
+        //    if (item == null)
+        //    {
+        //        ModelState.AddModelError("", "Не указаны данные для пользователя");
+        //        return BadRequest(ModelState);
+        //    }
+        //    // если есть ошибки - возвращаем ошибку 400
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
 
-        // POST api/feeds
-        [HttpPost]
-        public IActionResult Post([FromBody]FeedItem item)
-        {
-            if (item == null)
-            {
-                ModelState.AddModelError("", "Не указаны данные для пользователя");
-                return BadRequest(ModelState);
-            }
-            // если есть ошибки - возвращаем ошибку 400
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        //    // если ошибок нет, сохраняем в базу данных
+        //    db.Items.Add(item);
+        //    db.SaveChanges();
+        //    return Ok(item);
+        //}
 
-            // если ошибок нет, сохраняем в базу данных
-            db.Items.Add(item);
-            db.SaveChanges();
-            return Ok(item);
-        }
+        //// PUT api/feeds/
+        //[HttpPut]
+        //public IActionResult Put([FromBody]FeedList item)
+        //{
+        //    if (item == null)
+        //    {
+        //        return BadRequest();
+        //    }
+        //    if (!db.UrlsList.Any(x => x.Id == item.Id))
+        //    {
+        //        return NotFound();
+        //    }
 
-        // PUT api/feeds/
-        [HttpPut]
-        public IActionResult Put([FromBody]FeedList item)
-        {
-            if (item == null)
-            {
-                return BadRequest();
-            }
-            if (!db.UrlsList.Any(x => x.Id == item.Id))
-            {
-                return NotFound();
-            }
+        //    db.Update(item);
+        //    db.SaveChanges();
+        //    return Ok(item);
+        //}
 
-            db.Update(item);
-            db.SaveChanges();
-            return Ok(item);
-        }
-
-        // DELETE api/feeds/5
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            FeedList item = db.UrlsList.FirstOrDefault(x => x.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-            db.UrlsList.Remove(item);
-            db.SaveChanges();
-            return Ok(item);
-        }
+        //// DELETE api/feeds/5
+        //[HttpDelete("{id}")]
+        //public IActionResult Delete(int id)
+        //{
+        //    FeedList item = db.UrlsList.FirstOrDefault(x => x.Id == id);
+        //    if (item == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    db.UrlsList.Remove(item);
+        //    db.SaveChanges();
+        //    return Ok(item);
+        //}
     }
 }
