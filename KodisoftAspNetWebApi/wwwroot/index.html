@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Список ресурсов</title>
+    <link href="lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <script src="lib/jquery/dist/jquery.js"></script>
+</head>
+<body>
+<h2>Список ресурсов</h2>
+<div id="errors" class="alert alert-danger" style="display:none;"></div>
+<form name="resourcesForm">
+    <input type="hidden" name="id" value="0" />
+    <div class="form-group">
+        <label for="feedurl">RSS/Atom URL:</label>
+        <input class="form-control" name="feedurl" />
+    </div>
+    <div class="form-group">
+        <label for="subgroup">Пользовательская группа:</label>
+        <input class="form-control" name="subgroup" />
+    </div>
+    <div class="panel-body">
+        <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
+        <a id="reset" class="btn btn-sm btn-primary">Сбросить</a>
+    </div>
+</form>
+<table class="table table-condensed table-striped table-bordered">
+    <thead><tr><th>Id</th><th>RSS/Atom URLs</th><th>Пользовательская группа</th><th></th></tr></thead>
+    <tbody>
+    </tbody>
+</table>
+ 
+<script>
+    // Получение всех пользователей
+    function GetResources() {
+        $.ajax({
+            url: '/api/feeds',
+            type: 'GET',
+            contentType: "application/json",
+            success: function (feeds) {
+                var rows = "";
+                $.each(feeds, function (index, feedlist) {
+                    // добавляем полученные элементы в таблицу
+                    rows += row(feedlist);
+                })
+                $("table tbody").append(rows);
+            }
+        });
+    }
+    // Получение одного пользователя
+    function GetResource(id) {
+        $.ajax({
+            url: '/api/feeds/' + id,
+            type: 'GET',
+            contentType: "application/json",
+            success: function (user) {
+                var form = document.forms["resourcesForm"];
+                form.elements["id"].value = user.id;
+                form.elements["feedurl"].value = user.feedurl;
+                form.elements["subgroup"].value = user.subgroup;
+            }
+        });
+    }
+    // Добавление пользователя
+    function CreateResource(userName, userAge) {
+        $.ajax({
+            url: "api/feeds",
+            contentType: "application/json",
+            method: "POST",
+            data: JSON.stringify({
+                name: userName,
+                age: userAge
+            }),
+            success: function (user) {
+                reset();
+                $("table tbody").append(row(user));
+            },
+            error: function (jxqr, error, status) {
+                // парсинг json-объекта
+                console.log(jxqr);
+                if(jxqr.responseText===""){
+                    $('#errors').append("<h3>" + jxqr.statusText + "</h3>");
+                }
+                else{
+                    var response = JSON.parse(jxqr.responseText);
+                    // добавляем общие ошибки модели
+                    if (response['']) {
+ 
+                        $.each(response[''], function (index, item) {
+                            $('#errors').append("<p>" + item + "</p>");
+                        });
+                    }
+                    // добавляем ошибки свойства Name
+                    if (response['Name']) {
+ 
+                        $.each(response['Name'], function (index, item) {
+                            $('#errors').append("<p>" + item + "</p>");
+                        });
+                    }
+                    // добавляем ошибки свойства Age
+                    if (response['Age']) {
+                        $.each(response['Age'], function (index, item) {
+                            $('#errors').append("<p>" + item + "</p>");
+                        });
+                    }
+                }
+                     
+                $('#errors').show();
+            }
+        })
+    }
+    // Изменение пользователя
+    function EditResource(userId, userName, userAge) {
+        $.ajax({
+            url: "api/feeds",
+            contentType: "application/json",
+            method: "PUT",
+            data: JSON.stringify({
+                id: userId,
+                name: userName,
+                age: userAge
+            }),
+            success: function (user) {
+                reset();
+                $("tr[data-rowid='" + user.id + "']").replaceWith(row(user));
+            }
+        })
+    }
+ 
+    // сброс формы
+    function reset() {
+        var form = document.forms["resourcesForm"];
+        form.reset();
+        form.elements["id"].value = 0;
+    }
+ 
+    // Удаление пользователя
+    function DeleteResource(id) {
+        $.ajax({
+            url: "api/feeds/" + id,
+            contentType: "application/json",
+            method: "DELETE",
+            success: function (user) {
+                $("tr[data-rowid='" + user.id + "']").remove();
+            }
+        })
+    }
+    var row = function (user) {
+        return "<tr data-rowid='" + user.id + "'><td>" + user.id + "</td>" +
+            "<td>" + user.name + "</td> <td>" + user.age + "</td>" +
+            "<td><a class='editLink' data-id='" + user.id + "'>Изменить</a> | " +
+            "<a class='removeLink' data-id='" + user.id + "'>Удалить</a></td></tr>";
+    }
+    //$(function () {
+    // сброс значений формы
+    $("#reset").click(function (e) {
+ 
+        e.preventDefault();
+        reset();
+    })
+ 
+    // отправка формы
+    $("form").submit(function (e) {
+        e.preventDefault();
+        $('#errors').empty();
+        $('#errors').hide();
+        var id = this.elements["id"].value;
+        var feedurl = this.elements["feedurl"].value;
+        var subgroup = this.elements["subgroup"].value;
+        if (id == 0)
+            CreateResource(feedurl, subgroup);
+        else
+            EditResource(id, feedurl, subgroup);
+    });
+ 
+    // нажимаем на ссылку Изменить
+    $("body").on("click", ".editLink", function () {
+        var id = $(this).data("id");
+        GetResource(id);
+    })
+    // нажимаем на ссылку Удалить
+    $("body").on("click", ".removeLink", function () {
+        var id = $(this).data("id");
+        DeleteResource(id);
+    })
+ 
+    // загрузка пользователей
+    GetResources();
+</script>
+</body>
+</html>
