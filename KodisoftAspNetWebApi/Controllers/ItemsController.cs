@@ -30,8 +30,9 @@ namespace KodisoftAspNetWebApi.Controllers
         [ActionName("GetNews")]
         public IActionResult Get(int id)
         {
-            var parsing = new ParsingAndSaveFeeds();
+            var parsing = new ParsingAndSaveItems();
             parsing.Parsing(id);
+
 
             //FeedList feedList = db.UrlsList.FirstOrDefault(x => x.Id == id);
             FeedItem feedItem = db.Items.FirstOrDefault(x => x.FeedUrlId == id);
@@ -39,6 +40,25 @@ namespace KodisoftAspNetWebApi.Controllers
                 return NotFound();
             return new ObjectResult(feedItem);
         }
+
+        ////Get news by SubGroup
+        //[HttpGet("{id}")]
+        //[ActionName("getnews-for-subgroupe")]
+        //public IActionResult Get(string subgroupe)
+        //{
+        //    var parsing = new ParsingAndSaveItems();
+        //    parsing.Parsing(id);
+
+
+        //    //FeedList feedList = db.UrlsList.FirstOrDefault(x => x.Id == id);
+        //    FeedItem feedItem = db.Items.FirstOrDefault(x => x.FeedUrlId == id);
+        //    if (feedItem == null)
+        //        return NotFound();
+        //    return new ObjectResult(feedItem);
+        //}
+
+
+
         ////does not finished part
         //// POST api/feeds
         //[HttpPost]

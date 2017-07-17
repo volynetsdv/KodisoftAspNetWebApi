@@ -31,7 +31,7 @@ namespace KodisoftAspNetWebApi
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            string con = "Server=(localdb)\\mssqllocaldb;Database=usersdbstore;Trusted_Connection=True;MultipleActiveResultSets=true";
+            string con = "Server=(localdb)\\mssqllocaldb;Database=feedsdbstore;Trusted_Connection=True;MultipleActiveResultSets=true";
             services.AddDbContext<FeedsContext>(options => options.UseSqlServer(con));
             services.AddMvc();
 

@@ -8,19 +8,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KodisoftAspNetWebApi
 {
-    public class ParsingAndSaveFeeds
+    public class ParsingAndSaveItems
     {
         public void Parsing(int id) 
         {
-            var optionsBuilder = new DbContextOptionsBuilder<FeedsContext>();
-            var options = optionsBuilder
-                .UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=usersdbstore;Trusted_Connection=True;MultipleActiveResultSets=true")
-                .Options;
-            var db = new FeedsContext(options);
             var parser = new FeedParser();
-
+            
             //get RSS/Atom URL for parser
-            var requestUrl = db.UrlsList.ElementAtOrDefault(id).FeedUrl;  //<<<<<<<EXCEPTION!!!
+            var UrlsList = FeedsController.db.UrlsList.ToList();  //<<<<<<<EXCEPTION!!!
+            var requestUrl;
+            foreach (var url in UrlsList)
+            {
+                if (url.Id.Equals(id))
+                {
+                    requestUrl = url;
+                    break;
+                }
+            }
 
             FeedType resourceTipe;
             if (requestUrl.Contains("rss"))
@@ -34,7 +38,7 @@ namespace KodisoftAspNetWebApi
             //save each eltmtnts to SQL
             foreach (var n in news)
             {
-                db.Add(n);
+                FeedsController.db.Add(n);
             }
         }
     }

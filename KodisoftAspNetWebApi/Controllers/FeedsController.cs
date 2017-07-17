@@ -12,16 +12,16 @@ namespace KodisoftAspNetWebApi.Controllers
     [Route("api/[controller]")]
     public class FeedsController : Controller
     {
-        public FeedsContext db;
+        public static FeedsContext db;
         public FeedsController(FeedsContext context)
         {
             db = context;
-            if (!db.UrlsList.Any())
-            {
-                db.UrlsList.Add(new FeedList { FeedUrl = @"http://receptculinar.ru/blog/atom", SubGroup = "news1" });
-                db.UrlsList.Add(new FeedList { FeedUrl = @"http://ahier.ru/rss.xml", SubGroup = "news2" });
-                db.SaveChanges();
-            }
+            //if (!db.UrlsList.Any()) 
+            //{
+            //    db.UrlsList.Add(new FeedList { FeedUrl = @"http://receptculinar.ru/blog/atom", SubGroup = "news1" });
+            //    db.UrlsList.Add(new FeedList { FeedUrl = @"http://ahier.ru/rss.xml", SubGroup = "news2" });
+            //    db.SaveChanges();
+            //}
         }
 
         [HttpGet]
@@ -42,11 +42,11 @@ namespace KodisoftAspNetWebApi.Controllers
 
         // POST api/feeds
         [HttpPost]
-        public IActionResult Post([FromBody]FeedList item)
+        public IActionResult Post([FromBody]FeedList url)
         {
-            if (item == null)
+            if (url == null)
             {
-                ModelState.AddModelError("", "Не указаны данные для пользователя");
+                ModelState.AddModelError("", "Не указан адрес ресурса");
                 return BadRequest(ModelState);
             }
             // если есть ошибки - возвращаем ошибку 400
@@ -54,41 +54,41 @@ namespace KodisoftAspNetWebApi.Controllers
                 return BadRequest(ModelState);
 
             // если ошибок нет, сохраняем в базу данных
-            db.UrlsList.Add(item);
+            db.UrlsList.Add(url);
             db.SaveChanges();
-            return Ok(item);
+            return Ok(url);
         }
 
         // PUT api/feeds/
         [HttpPut]
-        public IActionResult Put([FromBody]FeedList item)
+        public IActionResult Put([FromBody]FeedList url)
         {
-            if (item == null)
+            if (url == null)
             {
                 return BadRequest();
             }
-            if (!db.UrlsList.Any(x => x.Id == item.Id))
+            if (!db.UrlsList.Any(x => x.Id == url.Id))
             {
                 return NotFound();
             }
 
-            db.Update(item);
+            db.Update(url);
             db.SaveChanges();
-            return Ok(item);
+            return Ok(url);
         }
 
         // DELETE api/feeds/5
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            FeedList item = db.UrlsList.FirstOrDefault(x => x.Id == id);
-            if (item == null)
+            FeedList url = db.UrlsList.FirstOrDefault(x => x.Id == id);
+            if (url == null)
             {
                 return NotFound();
             }
-            db.UrlsList.Remove(item);
+            db.UrlsList.Remove(url);
             db.SaveChanges();
-            return Ok(item);
+            return Ok(url);
         }
     }
 }
