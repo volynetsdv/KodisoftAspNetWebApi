@@ -41,21 +41,21 @@ namespace KodisoftAspNetWebApi.Controllers
             return new ObjectResult(feedItem);
         }
 
-        ////Get news by SubGroup
-        //[HttpGet("{id}")]
-        //[ActionName("getnews-for-subgroupe")]
-        //public IActionResult Get(string subgroupe)
-        //{
-        //    var parsing = new ParsingAndSaveItems();
-        //    parsing.Parsing(id);
+        //Get news by SubGroup
+        [HttpGet("{id}")]
+        [ActionName("getnews-for-subgroupe")]
+        public IActionResult Get(string subgroupe)
+        {
+            var parsing = new ParsingAndSaveItems();
+            parsing.Parsing(subgroupe);
 
 
-        //    //FeedList feedList = db.UrlsList.FirstOrDefault(x => x.Id == id);
-        //    FeedItem feedItem = db.Items.FirstOrDefault(x => x.FeedUrlId == id);
-        //    if (feedItem == null)
-        //        return NotFound();
-        //    return new ObjectResult(feedItem);
-        //}
+            //FeedList feedList = db.UrlsList.FirstOrDefault(x => x.Id == id);
+            FeedItem feedItem = db.Items.FirstOrDefault(x => x.FeedUrlId == id);
+            if (feedItem == null)
+                return NotFound();
+            return new ObjectResult(feedItem);
+        }
 
 
 
