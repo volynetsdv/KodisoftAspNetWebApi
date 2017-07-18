@@ -8,8 +8,8 @@ using KodisoftAspNetWebApi;
 
 namespace KodisoftAspNetWebApi.Migrations
 {
-    [DbContext(typeof(FeedsContext))]
-    [Migration("20170713200008_Initial")]
+    [DbContext(typeof(Models.FeedsContext))]
+    [Migration("20170717231531_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,9 +26,9 @@ namespace KodisoftAspNetWebApi.Migrations
                     b.Property<string>("Description")
                         .IsRequired();
 
-                    b.Property<int>("FeedType");
+                    b.Property<int?>("FeedListId");
 
-                    b.Property<int?>("FeedURLsId");
+                    b.Property<int>("FeedType");
 
                     b.Property<int>("FeedUrlId");
 
@@ -43,7 +43,7 @@ namespace KodisoftAspNetWebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FeedURLsId");
+                    b.HasIndex("FeedListId");
 
                     b.ToTable("Items");
                 });
@@ -67,9 +67,9 @@ namespace KodisoftAspNetWebApi.Migrations
 
             modelBuilder.Entity("KodisoftAspNetWebApi.Models.FeedItem", b =>
                 {
-                    b.HasOne("KodisoftAspNetWebApi.Models.FeedList", "FeedURLs")
+                    b.HasOne("KodisoftAspNetWebApi.Models.FeedList")
                         .WithMany("FeedItems")
-                        .HasForeignKey("FeedURLsId");
+                        .HasForeignKey("FeedListId");
                 });
         }
     }

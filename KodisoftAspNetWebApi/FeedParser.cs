@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using KodisoftAspNetWebApi.Models;
@@ -9,10 +10,6 @@ namespace KodisoftAspNetWebApi
 {
     // about RSS: https://cyber.harvard.edu/rss/rss.html#lttextinputgtSubelementOfLtchannelgt
     // about parsing: http://www.anotherchris.net/csharp/simplified-csharp-atom-and-rss-feed-parser/
-
-    //usage:
-    //FeedParser parser = new FeedParser();
-    //var items = parser.Parse("http://www.ft.com/rss/home/uk", FeedType.RSS);
 
 
     /// <summary>
@@ -69,27 +66,37 @@ namespace KodisoftAspNetWebApi
         /// </summary>
         public virtual IList<FeedItem> ParseRss(string url)
         {
-            try
+            //try
+            //{
+            using (var client = new HttpClient())
             {
-                XDocument doc = XDocument.Load(url);
+                client.BaseAddress = new Uri(url);
+                var responseMessage = client.GetAsync(url).GetAwaiter().GetResult();
+                var responseString = responseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+                //extract feed items
+                XDocument doc = XDocument.Parse(responseString);
                 // RSS/Channel/item
                 var entries = from item in doc.Root.Descendants().First(i => i.Name.LocalName == "channel").Elements()
                         .Where(i => i.Name.LocalName == "item")
                     select new FeedItem
-                    {
-                        FeedType = FeedType.RSS,
-                        Description = item.Elements().First(i => i.Name.LocalName == "description").Value,
-                        ResourceUrl = item.Elements().First(i => i.Name.LocalName == "link").Value,
-                        UpdatedOn = ParseDate(item.Elements().First(i => i.Name.LocalName == "pubDate").Value),
+                    {                        
                         Title = item.Elements().First(i => i.Name.LocalName == "title").Value,
-                        Image = item.Elements().First(i => i.Name.LocalName == "img").Attribute("src").Value //не уверен в корректности указанных входящих параметров
+                        ResourceUrl = item.Elements().First(i => i.Name.LocalName == "link").Value,
+                        Description = item.Elements().First(i => i.Name.LocalName == "description").Value,
+                        UpdatedOn = ParseDate(item.Elements().First(i => i.Name.LocalName == "pubDate").Value),
+                        //FeedType = FeedType.RSS,
+                        //Image =
+                        //    item.Elements().First(i => i.Name.LocalName == "img").Attribute("src")
+                        //        .Value //не уверен в корректности указанных входящих параметров
                     };
                 return entries.ToList();
             }
-            catch
-            {
-                return new List<FeedItem>();
-            }
+            //}
+            //catch
+            //{
+            //    return new List<FeedItem>();
+            //}
         }
 
         private DateTime ParseDate(string date)

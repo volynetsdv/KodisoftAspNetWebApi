@@ -26,7 +26,7 @@ namespace KodisoftAspNetWebApi.Models
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy,hh-mm}", ApplyFormatInEditMode = true)]
         public DateTime UpdatedOn { get; set; }
 
-        public FeedList FeedURLs { get; set; }
+        //public FeedList FeedURLs { get; set; }
 
         public FeedType FeedType { get; set; }
     }

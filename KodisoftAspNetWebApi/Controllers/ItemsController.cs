@@ -33,25 +33,23 @@ namespace KodisoftAspNetWebApi.Controllers
             var parsing = new ParsingAndSaveItems();
             parsing.Parsing(id);
 
-
             //FeedList feedList = db.UrlsList.FirstOrDefault(x => x.Id == id);
-            FeedItem feedItem = db.Items.FirstOrDefault(x => x.FeedUrlId == id);
+            FeedItem feedItem = db.Items.FirstOrDefault(x => x.FeedUrlId == id); //Не корректно присваивается FeedUrlId. Найти ошибку в Моделе
             if (feedItem == null)
                 return NotFound();
             return new ObjectResult(feedItem);
         }
 
         //Get news by SubGroup
-        [HttpGet("{id}")]
+        [HttpGet("{subgroupe}")]
         [ActionName("getnews-for-subgroupe")]
         public IActionResult Get(string subgroupe)
         {
             var parsing = new ParsingAndSaveItems();
             parsing.Parsing(subgroupe);
 
-
-            //FeedList feedList = db.UrlsList.FirstOrDefault(x => x.Id == id);
-            FeedItem feedItem = db.Items.FirstOrDefault(x => x.FeedUrlId == id);
+            //на скорую руку. Нужно доработать:
+            IQueryable<FeedList> feedItem = db.UrlsList.Where(x => x.SubGroup == subgroupe);
             if (feedItem == null)
                 return NotFound();
             return new ObjectResult(feedItem);

@@ -31,8 +31,8 @@ namespace KodisoftAspNetWebApi.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Description = table.Column<string>(nullable: false),
+                    FeedListId = table.Column<int>(nullable: true),
                     FeedType = table.Column<int>(nullable: false),
-                    FeedURLsId = table.Column<int>(nullable: true),
                     FeedUrlId = table.Column<int>(nullable: false),
                     Image = table.Column<string>(nullable: true),
                     ResourceUrl = table.Column<string>(nullable: true),
@@ -43,17 +43,17 @@ namespace KodisoftAspNetWebApi.Migrations
                 {
                     table.PrimaryKey("PK_Items", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Items_UrlsList_FeedURLsId",
-                        column: x => x.FeedURLsId,
+                        name: "FK_Items_UrlsList_FeedListId",
+                        column: x => x.FeedListId,
                         principalTable: "UrlsList",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Items_FeedURLsId",
+                name: "IX_Items_FeedListId",
                 table: "Items",
-                column: "FeedURLsId");
+                column: "FeedListId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

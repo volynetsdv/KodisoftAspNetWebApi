@@ -8,5 +8,13 @@ namespace KodisoftAspNetWebApi.Models
         public DbSet<FeedList> UrlsList { get; set; }
         public FeedsContext(DbContextOptions<FeedsContext> options) : base(options)
         { }
+
+        public FeedsContext()
+        {
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=feedsdbstore;Trusted_Connection=True;MultipleActiveResultSets=true");
+        }
     }
 }

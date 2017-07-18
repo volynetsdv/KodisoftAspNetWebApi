@@ -12,7 +12,7 @@ namespace KodisoftAspNetWebApi.Controllers
     [Route("api/[controller]")]
     public class FeedsController : Controller
     {
-        public static FeedsContext db;
+        FeedsContext db;
         public FeedsController(FeedsContext context)
         {
             db = context;
